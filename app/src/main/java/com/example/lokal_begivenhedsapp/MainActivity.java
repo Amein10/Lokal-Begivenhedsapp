@@ -73,5 +73,17 @@ public class MainActivity extends AppCompatActivity {
 
             adapter.notifyDataSetChanged();
         });
+
+        eventListView.setOnItemClickListener((parent, view, position, id) -> {
+            Event selectedEvent = shownEvents.get(position);
+
+            android.content.Intent intent = new android.content.Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("name", selectedEvent.name);
+            intent.putExtra("date", selectedEvent.date);
+            intent.putExtra("fullDescription", selectedEvent.fullDescription);
+            intent.putExtra("url", selectedEvent.url);
+
+            startActivity(intent);
+        });
     }
 }
