@@ -1,7 +1,8 @@
 package com.example.lokal_begivenhedsapp;
-import android.content.Intent;
+
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,8 +11,14 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Event> events = new ArrayList<>();
+    ArrayList<Event> allEvents = new ArrayList<>();
+    ArrayList<Event> shownEvents = new ArrayList<>();
+
     ListView eventListView;
+    EditText searchEditText;
+    Button searchButton;
+
+    EventAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +26,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         eventListView = findViewById(R.id.eventListView);
+        searchEditText = findViewById(R.id.searchEditText);
+        searchButton = findViewById(R.id.searchButton);
 
         // Hardcodede begivenheder
-        events.add(new Event(
+        allEvents.add(new Event(
                 "Fællesmøde",
                 "12. maj 2026",
                 "Møde for alle medlemmer.",
@@ -29,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                 "https://www.google.com"
         ));
 
-        events.add(new Event(
+        allEvents.add(new Event(
                 "Sommerfest",
                 "20. juni 2026",
                 "Hyggelig sommerfest.",
@@ -37,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 "https://www.google.com"
         ));
 
-        events.add(new Event(
+        allEvents.add(new Event(
                 "Frivilligdag",
                 "5. juli 2026",
                 "Hjælp til praktiske opgaver.",
@@ -45,31 +54,24 @@ public class MainActivity extends AppCompatActivity {
                 "https://www.google.com"
         ));
 
-        ArrayList<String> eventTexts = new ArrayList<>();
+        shownEvents.addAll(allEvents);
 
-        for (Event event : events) {
-            eventTexts.add(event.name + "\n" + event.date + "\n" + event.shortDescription);
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                eventTexts
-        );
-
+        adapter = new EventAdapter(this, shownEvents);
         eventListView.setAdapter(adapter);
 
-        // Når brugeren klikker på en begivenhed, åbnes detaljeskærmen
-        eventListView.setOnItemClickListener((parent, view, position, id) -> {
-            Event selectedEvent = events.get(position);
+        // Søgeknap filtrerer listen efter navn
+        searchButton.setOnClickListener(v -> {
+            String searchText = searchEditText.getText().toString().toLowerCase();
 
-            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-            intent.putExtra("name", selectedEvent.name);
-            intent.putExtra("date", selectedEvent.date);
-            intent.putExtra("fullDescription", selectedEvent.fullDescription);
-            intent.putExtra("url", selectedEvent.url);
+            shownEvents.clear();
 
-            startActivity(intent);
+            for (Event event : allEvents) {
+                if (event.name.toLowerCase().contains(searchText)) {
+                    shownEvents.add(event);
+                }
+            }
+
+            adapter.notifyDataSetChanged();
         });
     }
 }
