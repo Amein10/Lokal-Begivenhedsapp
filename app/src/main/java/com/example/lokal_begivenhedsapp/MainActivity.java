@@ -9,27 +9,36 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
+// MainActivity er appens startskærm, hvor alle begivenheder vises i en liste
 public class MainActivity extends AppCompatActivity {
 
+    // Liste med alle begivenheder (hardcoded data)
     ArrayList<Event> allEvents = new ArrayList<>();
+
+    // Liste der vises på skærmen (bruges til søgning/filtrering)
     ArrayList<Event> shownEvents = new ArrayList<>();
 
+    // UI-elementer fra layoutet
     ListView eventListView;
     EditText searchEditText;
     Button searchButton;
 
+    // Adapter der forbinder data med ListView
     EventAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Sætter layoutet for startskærmen
         setContentView(R.layout.activity_main);
 
+        // Finder UI-elementer fra XML via deres id
         eventListView = findViewById(R.id.eventListView);
         searchEditText = findViewById(R.id.searchEditText);
         searchButton = findViewById(R.id.searchButton);
 
-        // Hardcodede begivenheder
+        // Opretter hardcodede begivenheder
         allEvents.add(new Event(
                 "Fællesmøde",
                 "12. maj 2026",
@@ -54,35 +63,45 @@ public class MainActivity extends AppCompatActivity {
                 "https://www.google.com"
         ));
 
+        // Kopierer alle events til listen der vises
         shownEvents.addAll(allEvents);
 
+        // Opretter adapter og kobler den til ListView
         adapter = new EventAdapter(this, shownEvents);
         eventListView.setAdapter(adapter);
 
-        // Søgeknap filtrerer listen efter navn
+        // Når brugeren trykker på søg, filtreres listen efter navn
         searchButton.setOnClickListener(v -> {
             String searchText = searchEditText.getText().toString().toLowerCase();
 
+            // Tømmer listen
             shownEvents.clear();
 
+            // Tilføjer kun events der matcher søgeteksten
             for (Event event : allEvents) {
                 if (event.name.toLowerCase().contains(searchText)) {
                     shownEvents.add(event);
                 }
             }
 
+            // Opdaterer listen på skærmen
             adapter.notifyDataSetChanged();
         });
 
+        // Når man klikker på et element i listen, åbnes detaljeskærmen
         eventListView.setOnItemClickListener((parent, view, position, id) -> {
+
+            // Finder den valgte begivenhed
             Event selectedEvent = shownEvents.get(position);
 
+            // Opretter intent og sender data videre til DetailActivity
             android.content.Intent intent = new android.content.Intent(MainActivity.this, DetailActivity.class);
             intent.putExtra("name", selectedEvent.name);
             intent.putExtra("date", selectedEvent.date);
             intent.putExtra("fullDescription", selectedEvent.fullDescription);
             intent.putExtra("url", selectedEvent.url);
 
+            // Starter detaljeskærmen
             startActivity(intent);
         });
     }

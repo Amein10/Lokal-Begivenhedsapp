@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Manifestet beskriver appens struktur og hvilke aktiviteter der findes -->
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,15 +13,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LokalBegivenhedsapp">
 
+        <!-- DetailActivity bruges til at vise detaljer om en valgt begivenhed,
+             fx dato, fuld beskrivelse og mulighed for at åbne et link -->
         <activity android:name=".DetailActivity" />
 
+        <!-- MainActivity er appens startskærm, hvor brugeren ser listen af begivenheder -->
         <activity
             android:name=".MainActivity"
             android:exported="true">
 
+            <!-- Intent-filteret gør, at denne activity bliver den første skærm,
+                 der åbnes, når brugeren starter appen -->
             <intent-filter>
+
+                <!-- MAIN betyder, at dette er startpunktet for appen -->
                 <action android:name="android.intent.action.MAIN" />
+
+                <!-- LAUNCHER gør, at appen vises på telefonens startskærm -->
                 <category android:name="android.intent.category.LAUNCHER" />
+
             </intent-filter>
 
         </activity>
